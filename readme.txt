@@ -1,0 +1,3 @@
+Never Alone is a 2D platform game for OUYA in javascript with gamepad api and html5 canvas... 
+
+WORK IN PROGRESS
