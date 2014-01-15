@@ -4,13 +4,14 @@
 
 define(['input','config', 'canvas'], function(input, config, canvas) {
 	function Player() {
-		this.x = window.innerWidth/2;
-		this.y = window.innerHeight - 180;
 		this.width = 80;
 		this.height = 180;
-		this.speed= 10;
-		this.velX= 0;
-		this.velY= 0;
+		this.x = window.innerWidth*.5 - this.width*.5;
+		this.y = window.innerHeight - 180;
+		this.speed = 5;
+		this.speedRun = 10;
+		this.velX = 0;
+		this.velY = 0;
 		this.jumping= false;
 		this.canJump = true;
 		this.personality = 0;         //0 = peureux, 1 = sadique, 2 = paranoiaque
@@ -43,7 +44,7 @@ define(['input','config', 'canvas'], function(input, config, canvas) {
 			    if(this.y >= canvas.canvas.height - this.height){
 			        this.y = canvas.canvas.height - this.height;
 			        this.jumping = false;
-			        console.log('dessous')
+			        // console.log('dessous')
 			    }
 
 		};
@@ -52,8 +53,11 @@ define(['input','config', 'canvas'], function(input, config, canvas) {
 		// Gère les contrôles utilisateur au gamepad
 		this.characterGamepadController = function() {
 			// gauche/droite JOYSTICK
-			this.x += input.gamepad.joystickLeft.axeX * this.speed;
-			this.direction = Math.atan2( input.gamepad.joystickLeft.axeX ) || this.direction;
+			if(this.personality == 0 && input.gamepad.U)
+				this.velX += input.gamepad.joystickLeft.axeX * this.speedRun;
+			else
+				this.velX += input.gamepad.joystickLeft.axeX * this.speed;
+			//this.direction = Math.atan2( input.gamepad.joystickLeft.axeX ) || this.direction;
 
 			// changement d'état R2
 			if ( (input.gamepad.r2 || input.gamepad.l2) && this.canChangePersonality){
@@ -92,12 +96,12 @@ define(['input','config', 'canvas'], function(input, config, canvas) {
 		this.jump = function(){
 			
 	      if(!this.jumping){
-	        if(this.personality == 0 ){
+	        if(this.personality == 0 && input.gamepad.U ){
 	          this.jumping = true;
-	          this.velY = - this.speed*1.5;
+	          this.velY = - this.speed*2.9;
 	        }else{
 	          this.jumping = true;
-	          this.velY = - this.speed*0.9;
+	          this.velY = - this.speed*1.5;
 	        }
 	      
 	      }

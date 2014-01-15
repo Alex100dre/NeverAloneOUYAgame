@@ -16,7 +16,7 @@ define([], function() {
 	canvas.style.left = 0;
 	canvas.style.right = 0;
 	canvas.style.bottom = 0;
-	canvas.style.backgroundColor = '#000';
+	canvas.style.backgroundColor = 'yellow';
 
 	// Ajout du canvas à la page
 	window.document.body.appendChild( canvas );
