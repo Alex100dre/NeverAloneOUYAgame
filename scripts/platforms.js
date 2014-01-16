@@ -10,20 +10,20 @@ define(['config', 'canvas', 'player'], function(config, canvas, player) {
         this.boxes.push({
             x: 0,
             y: 0,
-            width: 10,
-            height: canvas.canvas.height
-        });
-        this.boxes.push({
-            x: 0,
-            y: canvas.canvas.height - 2,
-            width: canvas.canvas.width,
+            width: 200,
             height: 50
         });
         this.boxes.push({
-            x: canvas.canvas.width - 10,
-            y: 0,
+            x: 0,
+            y: canvas.canvas.height - 120,
             width: 50,
-            height: canvas.canvas.height
+            height: 50
+        });
+        this.boxes.push({
+            x: canvas.canvas.width - 200,
+            y: 0,
+            width: 100,
+            height: 50
         });
 
         this.update = function(){
@@ -33,9 +33,10 @@ define(['config', 'canvas', 'player'], function(config, canvas, player) {
         this.render = function(){
 
              for (var i = 0; i < this.boxes.length; i++) {
-                console.log(this.boxes[i].x, this.boxes[i].y, this.boxes[i].width, this.boxes[i].height);
-                
-                canvas.ctx.rect(this.boxes[i].x, this.boxes[i].y, this.boxes[i].width, this.boxes[i].height);
+                //console.log(this.boxes[i].x, this.boxes[i].y, this.boxes[i].width, this.boxes[i].height);
+                canvas.ctx.fillStyle = "black";
+                canvas.ctx.fillRect(this.boxes[i].x, this.boxes[i].y, this.boxes[i].width, this.boxes[i].height);
+                canvas.ctx.save();
                 
             }
         }

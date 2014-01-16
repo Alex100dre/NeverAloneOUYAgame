@@ -16,7 +16,8 @@ define([], function() {
 	canvas.style.left = 0;
 	canvas.style.right = 0;
 	canvas.style.bottom = 0;
-	canvas.style.backgroundColor = 'yellow';
+	canvas.style.backgroundImage = 'url("assets/images/bg1.png")';
+	canvas.style.backgroundSize = '100%';
 
 	// Ajout du canvas à la page
 	window.document.body.appendChild( canvas );

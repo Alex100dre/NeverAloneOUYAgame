@@ -31,9 +31,9 @@ define([], function() {
 
 		r1 : false,
 		r2 : false,
-		isR2active : false,
 		r3 : false,
 
+		start : false,
 		// Joysticks
 		joystickLeft : {
 			axeX : 0,
@@ -93,6 +93,8 @@ define([], function() {
 
 		gamepad.r2 = mainGamepad.buttons[7] > .15;
 		gamepad.l2 = mainGamepad.buttons[6] > .15;
+
+		gamepad.start = mainGamepad.buttons[9] ===1;
 		// Vérification et correction de la marge d'erreur renvoyée sur les Axes par l'API Gamepad
 		gamepad.joystickLeft.axeX = ( Math.abs(0 - gamepad.joystickLeft.axeX) > 0.15) ? gamepad.joystickLeft.axeX : 0;
 		gamepad.joystickLeft.axeY = ( Math.abs(0 - gamepad.joystickLeft.axeY) > 0.15) ? gamepad.joystickLeft.axeY : 0;
