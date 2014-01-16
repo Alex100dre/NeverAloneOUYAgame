@@ -70,6 +70,7 @@ define(['input','config', 'canvas'], function(input, config, canvas) {
 			else
 				this.velX += input.gamepad.joystickLeft.axeX * this.speed;
 
+
 			if(input.gamepad.joystickLeft.axeX > 0){
 				this.sens = 1;
 			}else if(input.gamepad.joystickLeft.axeX < 0){
@@ -127,21 +128,34 @@ define(['input','config', 'canvas'], function(input, config, canvas) {
 		}
 
 		this.animPerso = function(){
-			if(input.gamepad.joystickLeft.axeX > 0){
+			
 				var delta = Date.now() - this.lastUpdateTime; 
-				console.log(this.acDelta +' / '+ (Date.now() - this.lastUpdateTime));
+				//console.log(this.acDelta +' / '+ (Date.now() - this.lastUpdateTime));
 				if (this.acDelta > this.msPerFrame) {
-					// if (this.sens && this.frame%((7/this.speed)|0)==0){
-						 this.acDelta = 0;
-					this.etapeSprite.x+=this.etapeSprite.width;
-					if(this.etapeSprite.x >= this.etapeSprite.width*this.etapeSprite.nb){
-						this.etapeSprite.x = 0;
+					if(input.gamepad.joystickLeft.axeX > 0){
+						this.acDelta = 0;
+						this.etapeSprite.y=0;
+						this.etapeSprite.x+=this.etapeSprite.width;
+						if(this.etapeSprite.x >= this.etapeSprite.width*this.etapeSprite.nb){
+							this.etapeSprite.x = 0;
+						}
 					}
+
+					if(input.gamepad.joystickLeft.axeX == 0){
+
+						if(this.sens == 1){
+							console.log('lol');
+							this.etapeSprite.x = 0;
+							this.etapeSprite.y = 0;
+						}
+					}
+
 				}else{
 			        this.acDelta += delta;
 			    }
 			    this.lastUpdateTime = Date.now();
-			}
+			
+
 		}
 
 		this.render = function() {
