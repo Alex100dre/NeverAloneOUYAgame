@@ -3,17 +3,38 @@
 **/
 require.config({
 	paths : {
-	
+		'IIG' : '../lib/IIG'
 	},
 	shim : {
-		
+		'IIG' : {
+			exports : 'IIG',
+			deps : []
+		}
 	}
 });
 
-require(['game', 'config'], function(game, config) {
+require(['game', 'config', 'IM'], function(game, config, IM) {
+	//player
+	IM.add('assets/images/sprites/player/standUp.png');
+	IM.add('assets/images/sprites/player/walk.png');
+	IM.add('assets/images/sprites/player/run.png');
+	IM.add('assets/images/sprites/player/jump.png');
+	IM.add('assets/images/sprites/player/punch.png');
+	//monster
+	IM.add('assets/images/sprites/monstre/standUp.png');
+	//level
+	IM.add('assets/images/levels/0/1.jpg');
+	IM.add('assets/images/levels/0/2.jpg');
+	IM.add('assets/images/levels/0/3.jpg');
+	IM.add('assets/images/levels/0/4.jpg');
+	IM.add('assets/images/bg1.jpg');
+
+	IM.loadAll(function() {
+		game.init();
 
 		// Premier appel pour entrer dans la boucle de jeu infinie
 		requestAnimFrame(GameLoop);
+	});
 
 	// Boucle de jeu
 	var delta = 0;

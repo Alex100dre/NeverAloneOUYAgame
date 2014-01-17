@@ -2,25 +2,25 @@
  * player.js
 **/
 
-define(['config', 'canvas', 'player'], function(config, canvas, player) {
-	var resolutionX = 640, resolutionY = 480;
-	var scrollX = 0, scrollY = 0;
+define(['canvas'], function(canvas) {
+	
+	function Camera()
+	{
+		this.x = 0;
+		this.y = 0;
+		this.width = canvas.canvas.width;
+		this.height = canvas.canvas.height;
 
-	init = function(){
+		this.changePosition = function(x, y) {
+			this.x = x;
+			this.y = y;
+		};
 
-	};
-
-	folowPlayer = function(){	
-		// Scroll horizontally if required
-		if (player.x + this.scrollX > this.resolutionX / 2 && player.velX > 0)
-			this.scrollX -= Math.floor(player.velX);
-		if (PlayerX + this.scrollX < this.resolutionX / 2 && player.velX < 0)
-			this.scrollX -= Math.floor(player.velX);
-		if (this.scrollX > 0)
-			this.scrollX = 0;
-		if (this.scrollX - this.resolutionX < -MapWidth * 32)
-			this.scrollX = (-MapWidth * 32) + this.resolutionX;
+		this.render = function() {
+			/*canvas.ctx.strokeStyle = 'red';
+			canvas.ctx.strokeRect(this.x, this.y, this.width, this.height);*/
+		};
 	}
 
-	return new Camera();
+	return new Camera;
 });

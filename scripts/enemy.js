@@ -2,103 +2,89 @@
  * enemy.js
 **/
 
-define(['config', 'IM', 'canvas'], function(config, IM, canvas) {
+define(['config', 'IM', 'canvas','IIG','input','camera','player'], function(config, IM, canvas, IIG, input,camera,player) {
 	
-	function Enemy( params ) {
-		this.x = params.x || 0;
-		this.y = params.y || 0;
-		this.direction = params.direction || 0;
-		this.speed = 3;
-		this.img = IM.getInstance('assets/images/enemy');
-		this.width = this.img.width;
-		this.height = this.img.height;
+	function Enemy(params){
+		//SPRITES
+
+		//STAND UP
+		this.img 	= IM.getInstance('assets/images/sprites/monstre/standUp');
+		this.img.animation = new IIG.Animation({
+			sWidth: 150,
+			sHeight: 150,
+			animByFrame :10
+		});
+		this.x 		= 500;
+		this.y 		= canvas.canvas.height - this.img.height;
+		this.type   = null;
+
+		this.direction	= {
+			x: (canvas.canvas.width*.5) - (this.width*.5),			 
+			y: (canvas.canvas.height - this.height - 115)
+		}
+
+	
+		this.width 	= this.img.animation.sWidth;
+		this.height = this.img.animation.sHeight;
+
 	};
 
 	function EnemyManager() {
-
 		this.enemiesList = [];
-		this.mainTarget = { x : 0, y : 0 };
+		this.Collider;
 
-		this.init = function() {
-			var i = config.enemies_number;
-			while (i-- > 0) {
-				this.add();
-			}
-		};
-
-		this.add = function() {
+		this.add = function(params){
 			// Instantiation du nouvel ennemi
-			var enemy = new Enemy({});
-
-			this.initPosition(enemy);
-
+			var enemy = new Enemy(params);
 			this.enemiesList.push(enemy);
 		};
 
-		this.initPosition = function(enemy) {
-			// Choisir la position de départ de l'ennemie par rapport à l'écran :
-			// 1 : top
-			// 2 : right
-			// 3 : bottom
-			// 4 : left
-			var pos = randi(1, 4);
+		this.init = function(Collider){
+			this.Collider = Collider;
 
-			switch (pos) {
-				case 1 :
-					enemy.x = rand(0, canvas.canvas.width);
-					enemy.y = - enemy.img.height;
-					break;
-				case 2 :
-					enemy.x = canvas.canvas.width;
-					enemy.y = rand(0, canvas.canvas.height);
-					break;
-				case 3 :
-					enemy.x = rand(0, canvas.canvas.width);
-					enemy.y = canvas.canvas.height;
-					break;
-				case 4 :
-					enemy.x = - enemy.img.width;
-					enemy.y = rand(0, canvas.canvas.height);
-					break;
-			}
-		};
+			this.add({
+				images : IM.getInstance('assets/images/sprites/monstre/standUp'),
+				animation : new IIG.Animation({
+					sWidth: 300,
+					sHeight: 300,
+					animByFrame :3
+				}),
+				y: canvas.canvas.height - 195,
+				type: 'chien'
+			});
 
-		this.checkCollisionWith = function(obj) {
-			// En prenant en compte le fait que obj est un objet contenant au moins les propriétés
-			// x, y, width, height
+			this.add({
+				images : IM.getInstance('assets/images/sprites/monstre/standUp'),
+				animation : new IIG.Animation({
+					sWidth: 300,
+					sHeight: 300,
+					animByFrame :3
+				}),
+				x: canvas.canvas.width - 256,
+				y: canvas.canvas.height - 195,
+				type: 'chien'
+			});
 
-			var e;
+			var p;
 			for (var i = 0, c = this.enemiesList.length; i < c; i++) {
-				e = this.enemiesList[i];
-
-				// Si on détecte une collision avec un ennemi, on
-				// renvoie cet ennemi ...
-				if (collide(obj, e))
-					return e;
-			}
-			// ... sinon, on renvoie false
-			return false;
+				p = this.enemiesList[i];
+				Collider.addBody(p.x, p.y, p.width, p.height);
+			};
 		};
 
-		this.updateTarget = function(x, y) {
-			this.mainTarget.x = x;
-			this.mainTarget.y = y;
+		this.fire = function(){
+			projectiles.add(this.x , this.y , this.direction);
 		};
 
 		this.update = function() {
 			// Parcours du tableau d'ennemis
 			var e;
-			// console.log(this.mainTarget.y);
 			for (var i = 0, c = this.enemiesList.length; i < c; i++) {
 				e = this.enemiesList[i];
 
-				e.direction = Math.atan2(this.mainTarget.y - e.y, this.mainTarget.x - e.x);
 
-				e.x += Math.cos(e.direction) * e.speed;
-				e.y += Math.sin(e.direction) * e.speed;
+				
 			}
-
-			// console.log( this.enemiesList.length );
 		};
 
 		this.render = function() {
@@ -106,27 +92,19 @@ define(['config', 'IM', 'canvas'], function(config, IM, canvas) {
 			var e;
 			for (var i = 0, c = this.enemiesList.length; i < c; i++) {
 				e = this.enemiesList[i];
+				IM.drawImage(canvas.ctx, e.img, e.x - camera.x, e.y);
 
-				canvas.ctx.save();
-				canvas.ctx.translate(e.x + e.width*.5, e.y + e.height*.5);
-				canvas.ctx.rotate(e.direction);
-				canvas.ctx.drawImage(e.img.data, - e.width*.5, - e.height*.5);
-				canvas.ctx.restore();
-
-				// canvas.ctx.strokeStyle = 'lime';
-				// canvas.ctx.strokeRect(e.x, e.y, e.width, e.height);
-			}
-		};
-
-		this.remove = function(obj) {
-			var e;
-			for (var i = 0, c = this.enemiesList.length; i < c; i++) {
-				e = this.enemiesList[i];
-
-				if (e === obj) {
-					this.enemiesList.splice(i, 1);
-					break;
+				if(e.type == 'kalash'){
+					// Si l'ennemi est à l'écran, alors il tire.
+					if(e.x >= camera.x && e.x <= (camera.x + canvas.canvas.width)){
+						console.log('coucou !');
+					}
+					/*if(e.img.animation.sx == 195){
+						console.log('shot mother fucker');
+						// projectiles à envoyer
+					}*/
 				}
+
 			}
 		};
 

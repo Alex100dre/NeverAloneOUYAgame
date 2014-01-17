@@ -3,13 +3,11 @@
 **/
 
 define([], function() {
-	width = window.innerWidth;
-	height = window.innerHeight;
 	var canvas = document.createElement('canvas');
 	var ctx = canvas.getContext('2d');
 
-	canvas.width = this.width;
-	canvas.height = this.height;
+	canvas.width = 1280;
+	canvas.height = 720;
 	// Force le canvas à s'adapter à l'écran
 	canvas.style.position = 'absolute';
 	canvas.style.top = 0;

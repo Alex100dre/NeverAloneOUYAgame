@@ -2,67 +2,54 @@
  * stage.js
 **/
 
-define(['canvas'], function(canvas) {
+define(['canvas', 'IM', 'camera'], function(canvas, IM, camera) {
 	
-	function Stage() {
-		// Etoiles
-		this.stars = [];
-		this.overallSpeed = 0;
-		this.overallDirection = 0;
+	var Stage = function(o) {
+		if ('object' !== typeof o) throw new Error('o must be an object');
+		if (!o.hasOwnProperty('backgrounds')) throw new Error('o.backgrounds must be specified');
+		if (!o.hasOwnProperty('platforms')) throw new Error('o.platforms must be specified');
 
-		this.init = function() {
-			var i = 50,	direction = rand(0, Math.PI*2), radius, speed;
-			while(i--) {
-				radius = rand(2,5);
-				speed = .5 * radius;
-
-				this.stars.push({
-					x : rand(0, canvas.canvas.width),
-					y : rand(0, canvas.canvas.height),
-					radius : radius,
-					speed : speed,
-					direction : direction
-				});
-			}
+		this.backgrounds = o.backgrounds;
+		this.backgroundImages = [];
+		this.platforms = o.platforms;
+		this.position = {
+			x : 0,
+			y : 0
 		};
+		/*this.width = o.backgrounds.length * canvas.canvas.width;
+		this.height = canvas.canvas.height;*/
+		this.img;
+	};
 
-		this.update = function() {
-			var s;
-			for (var i = 0, c = this.stars.length; i < c; i++) {
-				s = this.stars[i];
+	Stage.prototype.init = function(Collider) {
+		Collider.resetBodies();
+        // Ajout des bodies (pour les collisions) en fonction des plates-forme
+        var b;
+        for (var i = 0, c = this.platforms.length; i < c; i++) {
+            b = this.platforms[i];
+            Collider.addBody(b.x, b.y, b.width, b.height);
+        }
 
-				s.x += Math.cos(this.overallDirection) * (s.speed*this.overallSpeed);
-				s.y += Math.sin(this.overallDirection) * (s.speed*this.overallSpeed);
+        // Récupération des instances images
+        for (var i = 0, c = this.backgrounds.length; i < c; i++) {
+            b = this.backgrounds[i];
+            this.backgroundImages[i] = IM.getInstance(b);
+        }
 
-				if (s.x - s.radius > canvas.canvas.width)	s.x = - s.radius;
-				if (s.y - s.radius > canvas.canvas.height)	s.y = - s.radius;
-				if (s.x + s.radius < 0)						s.x = canvas.canvas.width + s.radius;
-				if (s.y + s.radius < 0)						s.y = canvas.canvas.height + s.radius;
-			}
-		};
+        // Image de test
+        this.img = IM.getInstance('assets/images/bg1');
+        this.width =  this.img.width;
+        this.height =  this.img.height;
+	};
 
-		this.updateBehavior = function( direction, speed ) {
-			this.overallDirection = direction;
-			this.overallSpeed = speed;
-		};
+	Stage.prototype.update = function() {
+		
+	};
 
-		this.render = function() {
-			canvas.ctx.fillStyle = '#fff';
+	Stage.prototype.render = function() {
+		canvas.ctx.drawImage(this.img.data, this.position.x - camera.x, this.position.y);
+	};
 
-			var s;
-			for (var i = 0, c = this.stars.length; i < c; i++) {
-				s = this.stars[i];
-
-				canvas.ctx.beginPath();
-				canvas.ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2, true);
-				canvas.ctx.fill();
-				canvas.ctx.closePath();
-			}
-
-			canvas.ctx.shadowBlur = 0;
-		};
-	}
-
-	return new Stage();
+	return Stage;
 
 });
